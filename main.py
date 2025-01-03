@@ -1,52 +1,57 @@
+"""Module providing a function os."""
+
 import os
 import csv
 from datetime import datetime
 
-def createCsvFile(path, name):
-    with open(name, 'w', newline='') as file:
+def create_csv_file(path, name) -> None:
+    """Function create csv file."""
+
+    with open(name, 'w', newline='', encoding="utf-8") as file:
         writer = csv.writer(file, dialect='excel')
         field = ['file_path', 'file_size', 'creation_date', 'file_type']
-        listOfDir = filesMetadata(path)
-        
+        list_of_dir = files_metadata(path)
         writer.writerow(field)
-        
-        for listName, item in listOfDir.items():
-            writer.writerow(item)       
-        
 
-def filesMetadata(path):
-    dirsDic = {}
-    
-    for name in os.listdir(dirInput):
-        filePath = os.path.join(dirInput, name)
-        stats = os.stat(filePath)
-        fileName, fileExt = os.path.splitext(name)
-        
+        for _, item in list_of_dir.items():
+            writer.writerow(item)
+
+def files_metadata(path) -> dict:
+    """Function returning date time formated."""
+
+    dirs_dic = {}
+    for name in os.listdir(path):
+        file_path = os.path.join(path, name)
+        stats = os.stat(file_path)
+        _, file_ext = os.path.splitext(name)
+
         attr = [
             path + name,
             stats.st_size,
-            timeConvert(stats.st_birthtime),
-            fileExt,
+            time_convert(stats.st_birthtime),
+            file_ext,
         ]
-    
-        dirsDic[name] = attr
-        
-    return dirsDic
 
-def timeConvert(time):
-    newTime = datetime.fromtimestamp(time)
-    return newTime.date()
+        dirs_dic[name] = attr
+
+    return dirs_dic
+
+def time_convert(time) -> datetime:
+    """Function returning date time formated."""
+
+    new_time = datetime.fromtimestamp(time)
+    return new_time.date()
 
 if __name__ == "__main__":
-    dirInput = input("Enter the directory path to scan: ")
-    isSaveFile = input("Want save? y/n: ")
-    
-    createCsvFile(dirInput, 'test.csv')
-    
-    if (isSaveFile == 'y'):
-        nameFile = input("Enter file name: ")
-        createCsvFile(dirInput, nameFile)
-    elif (isSaveFile == 'n'):
+    dir_input = input("Enter the directory path to scan: ")
+    is_save_file = input("Want save? y/n: ")
+
+    if is_save_file == 'y':
+        name_file = input("Enter file name: ")
+        create_csv_file(dir_input, name_file)
+
+    elif is_save_file == 'n':
         print("Bye!")
+
     else:
         print("Bye!")
